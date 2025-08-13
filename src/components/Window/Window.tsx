@@ -70,7 +70,7 @@ const Window: React.FC<WindowProps> = ({
       handle=".title-bar"
       position={window.isMaximized ? { x: 0, y: 0 } : window.position}
       onDrag={handleDrag}
-      disabled={window.isMaximized || isMobile}
+      disabled={window.isMaximized}
     >
       <div
         className={`window draggable-window ${window.isMaximized ? 'maximized' : ''} ${isMobile ? 'mobile-window' : ''}`}
@@ -119,20 +119,31 @@ const Window: React.FC<WindowProps> = ({
           {children}
         </div>
         
-        {/* Resize Handle - Hidden on mobile */}
-        {!window.isMaximized && !isMobile && (
+        {/* Resize Handle - Enhanced for mobile */}
+        {!window.isMaximized && (
           <div
             style={{
               position: 'absolute',
               bottom: 0,
               right: 0,
-              width: '16px',
-              height: '16px',
+              width: isMobile ? '24px' : '16px',
+              height: isMobile ? '24px' : '16px',
               cursor: 'nw-resize',
               background: 'linear-gradient(-45deg, transparent 30%, #808080 30%, #808080 70%, transparent 70%)',
-              zIndex: 1000
+              zIndex: 1000,
+              touchAction: 'none' // Prevent default touch behavior
             }}
             onMouseDown={handleResize}
+            onTouchStart={(e) => {
+              // Convert touch event to mouse event for mobile
+              const touch = e.touches[0];
+              const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                bubbles: true
+              });
+              handleResize(mouseEvent as any);
+            }}
           />
         )}
       </div>

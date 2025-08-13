@@ -114,7 +114,7 @@ const Desktop: React.FC = () => {
       <Taskbar
         windows={windowManager.windows}
         onStartClick={() => setShowStartMenu(!showStartMenu)}
-        onWindowRestore={windowManager.restoreWindow}
+        onWindowToggle={windowManager.toggleMinimizeWindow}
         showStartMenu={showStartMenu}
       />
     </div>

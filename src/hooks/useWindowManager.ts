@@ -159,6 +159,25 @@ export const useWindowManager = () => {
     setHighestZIndex(prev => prev + 1);
   }, [highestZIndex]);
 
+  const toggleMinimizeWindow = useCallback((windowId: string) => {
+    setWindows(prev => {
+      const targetWindow = prev.find(w => w.id === windowId);
+      if (targetWindow && targetWindow.isMinimized) {
+        setHighestZIndex(prevZIndex => prevZIndex + 1);
+      }
+      
+      return prev.map(window => 
+        window.id === windowId 
+          ? { 
+              ...window, 
+              isMinimized: !window.isMinimized, 
+              zIndex: window.isMinimized ? highestZIndex + 1 : window.zIndex 
+            }
+          : window
+      );
+    });
+  }, [highestZIndex]);
+
   const focusWindow = useCallback((windowId: string) => {
     setWindows(prev => prev.map(window => 
       window.id === windowId 
@@ -192,6 +211,7 @@ export const useWindowManager = () => {
     minimizeWindow,
     maximizeWindow,
     restoreWindow,
+    toggleMinimizeWindow,
     focusWindow,
     updateWindowPosition,
     updateWindowSize
