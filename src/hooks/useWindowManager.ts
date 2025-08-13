@@ -1,6 +1,23 @@
 import { useState, useCallback } from 'react';
 import { WindowState } from '../types';
 
+const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
+  if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    const mobileWidth = Math.min(desktopWidth, window.innerWidth * 0.9);
+    const mobileHeight = Math.min(desktopHeight, window.innerHeight * 0.8);
+    return { width: mobileWidth, height: mobileHeight };
+  }
+  return { width: desktopWidth, height: desktopHeight };
+};
+
+const getResponsivePosition = (desktopX: number, desktopY: number) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        return { x: 20, y: 20 };
+    }
+    return { x: desktopX, y: desktopY };
+}
+
+
 const initialWindows: WindowState[] = [
   {
     id: 'ashish-exe',
@@ -8,8 +25,8 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: { x: 100, y: 100 },
-    size: { width: 600, height: 500 },
+    position: getResponsivePosition(100, 100),
+    size: getResponsiveSize(600, 500),
     zIndex: 10
   },
   {
@@ -18,8 +35,8 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: { x: 150, y: 150 },
-    size: { width: 700, height: 600 },
+    position: getResponsivePosition(150, 150),
+    size: getResponsiveSize(700, 600),
     zIndex: 10
   },
   {
@@ -28,8 +45,8 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: { x: 200, y: 200 },
-    size: { width: 500, height: 400 },
+    position: getResponsivePosition(200, 200),
+    size: getResponsiveSize(500, 400),
     zIndex: 10
   },
   {
@@ -38,8 +55,8 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: { x: 250, y: 250 },
-    size: { width: 450, height: 350 },
+    position: getResponsivePosition(250, 250),
+    size: getResponsiveSize(450, 350),
     zIndex: 10
   },
   {
@@ -48,8 +65,8 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: { x: 300, y: 300 },
-    size: { width: 400, height: 300 },
+    position: getResponsivePosition(300, 300),
+    size: getResponsiveSize(400, 300),
     zIndex: 10
   }
 ];
