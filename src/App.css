@@ -81,6 +81,71 @@ body {
   pointer-events: auto;
 }
 
+/* Prevent 98.css from adding duplicate controls */
+.window .title-bar::after,
+.window .title-bar::before {
+  display: none !important;
+}
+
+/* Hide any auto-generated controls from 98.css */
+.window .title-bar > button:not(.title-bar-control) {
+  display: none !important;
+}
+
+/* Override 98.css title bar controls completely */
+.title-bar .title-bar-controls {
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+/* Hide all 98.css generated buttons */
+.title-bar button:not([class*="title-bar-control"]) {
+  display: none !important;
+}
+
+/* Ensure our custom controls are visible */
+.title-bar .title-bar-controls .title-bar-control {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Reset any 98.css positioning on title bar */
+.title-bar {
+  position: relative !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Force remove all other window controls */
+.window .title-bar button:not(.title-bar-control),
+.window .title-bar .title-bar-control:not([class*="title-bar-control"]) {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Ensure only our custom controls are interactive */
+.title-bar .title-bar-controls {
+  display: flex !important;
+  gap: 2px !important;
+  align-items: center !important;
+}
+
+/* Mobile specific adjustments for controls */
+@media (max-width: 768px) {
+  .title-bar .title-bar-controls {
+    gap: 4px !important;
+  }
+  
+  .title-bar .title-bar-control {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    font-size: 18px !important;
+  }
+}
+
 .window-content {
   height: calc(100% - 33px);
   overflow: auto;

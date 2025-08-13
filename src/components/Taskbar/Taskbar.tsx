@@ -4,17 +4,18 @@ import { WindowState } from '../../types';
 interface TaskbarProps {
   windows: WindowState[];
   onStartClick: () => void;
-  onWindowRestore: (windowId: string) => void;
+  onWindowToggle: (windowId: string) => void;
   showStartMenu: boolean;
 }
 
 const Taskbar: React.FC<TaskbarProps> = ({ 
   windows, 
   onStartClick, 
-  onWindowRestore, 
+  onWindowToggle, 
   showStartMenu 
 }) => {
   const openWindows = windows.filter(window => window.isOpen);
+  const [windowWidth, setWindowWidth] = React.useState(typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1024);
 
   const getCurrentTime = () => {
     return new Date().toLocaleTimeString([], { 
@@ -32,6 +33,17 @@ const Taskbar: React.FC<TaskbarProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(globalThis.window.innerWidth);
+    };
+
+    if (typeof globalThis.window !== 'undefined') {
+      globalThis.window.addEventListener('resize', handleResize);
+      return () => globalThis.window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   return (
@@ -90,30 +102,46 @@ const Taskbar: React.FC<TaskbarProps> = ({
         flex: 1,
         display: 'flex',
         marginLeft: '8px',
-        gap: '2px'
+        gap: '2px',
+        overflow: 'hidden'
       }}>
-        {openWindows.map(window => (
-          <button
-            key={window.id}
-            className={`taskbar-button ${window.isMinimized ? '' : 'active'}`}
-            onClick={() => onWindowRestore(window.id)}
-            style={{
-              height: '30px',
-              padding: '4px 8px',
-              border: window.isMinimized ? '2px outset #c0c0c0' : '2px inset #c0c0c0',
-              background: window.isMinimized ? '#c0c0c0' : '#808080',
-              fontSize: '11px',
-              cursor: 'pointer',
-              minWidth: '120px',
-              maxWidth: '150px',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis'
-            }}
-          >
-            {window.title}
-          </button>
-        ))}
+        {openWindows.map(window => {
+          // Calculate dynamic button width based on number of open windows
+          const windowCount = openWindows.length;
+          const availableWidth = windowWidth - 200; // Subtract space for start button and system tray
+          let buttonWidth = Math.max(80, Math.min(150, availableWidth / windowCount - 4)); // 4px for gap
+          
+          // On mobile, make buttons even more compact
+          if (windowWidth <= 768) {
+            buttonWidth = Math.max(60, Math.min(100, availableWidth / windowCount - 4));
+          }
+          
+          return (
+            <button
+              key={window.id}
+              className={`taskbar-button ${window.isMinimized ? '' : 'active'}`}
+              onClick={() => onWindowToggle(window.id)}
+              style={{
+                height: '30px',
+                padding: '4px 6px',
+                border: window.isMinimized ? '2px outset #c0c0c0' : '2px inset #c0c0c0',
+                background: window.isMinimized ? '#c0c0c0' : '#808080',
+                fontSize: '11px',
+                cursor: 'pointer',
+                width: `${buttonWidth}px`,
+                minWidth: `${Math.min(buttonWidth, 60)}px`,
+                maxWidth: `${buttonWidth}px`,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                flexShrink: 1,
+                flexGrow: 0
+              }}
+            >
+              {window.title}
+            </button>
+          );
+        })}
       </div>
 
       {/* System Tray */}

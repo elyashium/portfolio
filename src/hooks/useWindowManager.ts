@@ -6,27 +6,27 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     
-    // For mobile devices (480px and below)
+    // For mobile devices (480px and below) - Force 75% height
     if (screenWidth <= 480) {
       return {
         width: Math.min(desktopWidth, screenWidth - 20),
-        height: Math.min(desktopHeight, screenHeight * 0.7)
+        height: screenHeight * 0.75 - 40 // Subtract taskbar height
       };
     }
     
-    // For small tablets/large phones (481px to 768px)
+    // For small tablets/large phones (481px to 768px) - Force 75% height
     if (screenWidth <= 768) {
       return {
         width: Math.min(desktopWidth, screenWidth * 0.95),
-        height: Math.min(desktopHeight, screenHeight * 0.8)
+        height: screenHeight * 0.75 - 40 // Subtract taskbar height
       };
     }
     
-    // For tablets (769px to 1024px)
+    // For tablets (769px to 1024px) - Force 75% height
     if (screenWidth <= 1024) {
       return {
         width: Math.min(desktopWidth, screenWidth * 0.85),
-        height: Math.min(desktopHeight, screenHeight * 0.75)
+        height: screenHeight * 0.75 - 40 // Subtract taskbar height
       };
     }
   }
