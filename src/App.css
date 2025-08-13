@@ -131,6 +131,19 @@ body {
     min-height: 180px;
   }
   
+  .draggable-window.mobile-window {
+    position: absolute !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 60px) !important;
+    overflow: hidden;
+  }
+  
+  .draggable-window.mobile-window .window-content {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .draggable-window.maximized {
     width: 100vw !important;
     height: calc(100vh - 40px) !important;
@@ -163,6 +176,13 @@ body {
   .draggable-window {
     min-width: 250px;
     min-height: 160px;
+  }
+  
+  .draggable-window.mobile-window {
+    max-width: calc(100vw - 10px) !important;
+    max-height: calc(100vh - 50px) !important;
+    left: 5px !important;
+    top: 5px !important;
   }
   
   .taskbar-button {

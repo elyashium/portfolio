@@ -2,20 +2,59 @@ import { useState, useCallback } from 'react';
 import { WindowState } from '../types';
 
 const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
-  if (typeof window !== 'undefined' && window.innerWidth < 768) {
-    const mobileWidth = Math.min(desktopWidth, window.innerWidth * 0.9);
-    const mobileHeight = Math.min(desktopHeight, window.innerHeight * 0.8);
-    return { width: mobileWidth, height: mobileHeight };
+  if (typeof window !== 'undefined') {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // For mobile devices (480px and below)
+    if (screenWidth <= 480) {
+      return {
+        width: Math.min(desktopWidth, screenWidth - 20),
+        height: Math.min(desktopHeight, screenHeight * 0.7)
+      };
+    }
+    
+    // For small tablets/large phones (481px to 768px)
+    if (screenWidth <= 768) {
+      return {
+        width: Math.min(desktopWidth, screenWidth * 0.95),
+        height: Math.min(desktopHeight, screenHeight * 0.8)
+      };
+    }
+    
+    // For tablets (769px to 1024px)
+    if (screenWidth <= 1024) {
+      return {
+        width: Math.min(desktopWidth, screenWidth * 0.85),
+        height: Math.min(desktopHeight, screenHeight * 0.75)
+      };
+    }
   }
+  
+  // Default desktop size
   return { width: desktopWidth, height: desktopHeight };
 };
 
 const getResponsivePosition = (desktopX: number, desktopY: number) => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        return { x: 20, y: 20 };
+  if (typeof window !== 'undefined') {
+    const screenWidth = window.innerWidth;
+    
+    // For mobile devices
+    if (screenWidth <= 480) {
+      return { x: 10, y: 10 };
     }
-    return { x: desktopX, y: desktopY };
-}
+    
+    // For tablets and small screens
+    if (screenWidth <= 1024) {
+      return { 
+        x: Math.max(10, Math.min(desktopX, screenWidth * 0.1)), 
+        y: Math.max(10, Math.min(desktopY, 60)) 
+      };
+    }
+  }
+  
+  return { x: desktopX, y: desktopY };
+};
 
 
 const initialWindows: WindowState[] = [

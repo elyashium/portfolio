@@ -62,15 +62,18 @@ const Window: React.FC<WindowProps> = ({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
+  // Check if we're on a mobile device
+  const isMobile = typeof globalThis.window !== 'undefined' && globalThis.window.innerWidth <= 768;
+  
   return (
     <Draggable
       handle=".title-bar"
       position={window.isMaximized ? { x: 0, y: 0 } : window.position}
       onDrag={handleDrag}
-      disabled={window.isMaximized}
+      disabled={window.isMaximized || isMobile}
     >
       <div
-        className={`window draggable-window ${window.isMaximized ? 'maximized' : ''}`}
+        className={`window draggable-window ${window.isMaximized ? 'maximized' : ''} ${isMobile ? 'mobile-window' : ''}`}
         style={{
           width: window.isMaximized ? '100vw' : `${window.size.width}px`,
           height: window.isMaximized ? 'calc(100vh - 40px)' : `${window.size.height}px`,
@@ -78,8 +81,11 @@ const Window: React.FC<WindowProps> = ({
           position: window.isMaximized ? 'fixed' : 'absolute',
           top: window.isMaximized ? '0' : undefined,
           left: window.isMaximized ? '0' : undefined,
-          minWidth: window.isMaximized ? '100vw' : '300px',
-          minHeight: window.isMaximized ? 'calc(100vh - 40px)' : '200px'
+          minWidth: isMobile ? '280px' : (window.isMaximized ? '100vw' : '300px'),
+          minHeight: isMobile ? '200px' : (window.isMaximized ? 'calc(100vh - 40px)' : '200px'),
+          maxWidth: isMobile ? '100vw' : undefined,
+          maxHeight: isMobile ? '100vh' : undefined,
+          overflow: isMobile ? 'hidden' : undefined
         }}
         onMouseDown={handleMouseDown}
       >
@@ -113,8 +119,8 @@ const Window: React.FC<WindowProps> = ({
           {children}
         </div>
         
-        {/* Resize Handle */}
-        {!window.isMaximized && (
+        {/* Resize Handle - Hidden on mobile */}
+        {!window.isMaximized && !isMobile && (
           <div
             style={{
               position: 'absolute',
