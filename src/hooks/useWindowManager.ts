@@ -67,6 +67,8 @@ export const useWindowManager = () => {
     setHighestZIndex(prev => prev + 1);
   }, [highestZIndex]);
 
+
+
   const closeWindow = useCallback((windowId: string) => {
     setWindows(prev => prev.map(window => 
       window.id === windowId 
@@ -125,6 +127,8 @@ export const useWindowManager = () => {
         : window
     ));
   }, []);
+
+  
   return {
     windows,
     openWindow,

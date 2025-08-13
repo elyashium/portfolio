@@ -65,7 +65,7 @@ const Window: React.FC<WindowProps> = ({
   return (
     <Draggable
       handle=".title-bar"
-      position={window.position}
+      position={window.isMaximized ? { x: 0, y: 0 } : window.position}
       onDrag={handleDrag}
       disabled={window.isMaximized}
     >
@@ -75,9 +75,11 @@ const Window: React.FC<WindowProps> = ({
           width: window.isMaximized ? '100vw' : `${window.size.width}px`,
           height: window.isMaximized ? 'calc(100vh - 40px)' : `${window.size.height}px`,
           zIndex: window.zIndex,
-          position: 'absolute',
-          minWidth: '300px',
-          minHeight: '200px'
+          position: window.isMaximized ? 'fixed' : 'absolute',
+          top: window.isMaximized ? '0' : undefined,
+          left: window.isMaximized ? '0' : undefined,
+          minWidth: window.isMaximized ? '100vw' : '300px',
+          minHeight: window.isMaximized ? 'calc(100vh - 40px)' : '200px'
         }}
         onMouseDown={handleMouseDown}
       >
