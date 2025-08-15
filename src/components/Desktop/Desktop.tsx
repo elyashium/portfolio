@@ -3,6 +3,8 @@ import Taskbar from '../Taskbar/Taskbar';
 import Window from '../Window/Window';
 import DesktopIcon from '../DesktopIcon/DesktopIcon';
 import StartMenu from '../StartMenu/StartMenu';
+
+import desktop_bg from './desktop_bg.png';
 import { useWindowManager } from '../../hooks/useWindowManager';
 
 // Import window content components
@@ -18,11 +20,11 @@ const Desktop: React.FC = () => {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
 
   const desktopIcons = [
-    { id: 'ashish-exe', label: 'ashish.exe', icon: '👨‍💻' },
+    { id: 'ashish-exe', label: 'Ashish.exe', icon: '👨‍💻' },
     { id: 'projects', label: 'Projects', icon: '📁' },
-    { id: 'blog', label: 'Blog', icon: '📝' },
-    { id: 'favorite-media', label: 'ashishs_fav_media', icon: '🎵' },
-    { id: 'doodle-pad', label: 'draw_for_me', icon: '🎨' }
+    { id: 'blog', label: 'Blog.exe', icon: '📝' },
+    { id: 'favorite-media', label: 'Ashishs fav media', icon: '🎵' },
+    { id: 'doodle-pad', label: 'Draw.exe', icon: '🎨' }
   ];
 
   const handleIconClick = (iconId: string) => {
@@ -58,7 +60,11 @@ const Desktop: React.FC = () => {
       style={{
         width: '100vw',
         height: '100vh',
-        background: 'linear-gradient(45deg, #008080, #20b2aa)',
+        // background: 'linear-gradient(45deg, #008080, #20b2aa)',
+        backgroundImage: `url(${desktop_bg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         position: 'relative',
         overflow: 'hidden'
       }}
