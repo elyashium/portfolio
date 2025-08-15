@@ -10,7 +10,7 @@ const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
   const [dots, setDots] = useState('');
 
   const bootMessages = [
-    'Starting Portfolio OS...',
+  
     'Loading components...',
     'Initializing windows...',
     'Setting up environment...',
@@ -63,7 +63,7 @@ const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
       left: 0,
       width: '100vw',
       height: '100vh',
-      background: '#c0c0c0',
+      background: '#000000',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -76,10 +76,13 @@ const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
       {/* Windows 98 Style Window for Boot Screen */}
       <div className="window" style={{
         width: '400px',
+        maxWidth: 'calc(100vw - 40px)',
+        margin: '0 20px',
         background: '#c0c0c0',
         border: '2px outset #c0c0c0',
         boxShadow: '2px 2px 0px #808080'
       }}>
+
         {/* Title Bar */}
         <div className="title-bar" style={{
           background: 'linear-gradient(90deg, #0080ff 0%, #0040ff 100%)',
@@ -88,7 +91,7 @@ const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
           fontWeight: 'bold',
           fontSize: '11px'
         }}>
-          <div className="title-bar-text">Starting Portfolio OS...</div>
+          <div className="title-bar-text">Loading...</div>
         </div>
         
         {/* Window Content */}

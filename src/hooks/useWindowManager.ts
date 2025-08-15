@@ -35,20 +35,31 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
   return { width: desktopWidth, height: desktopHeight };
 };
 
-const getResponsivePosition = (desktopX: number, desktopY: number) => {
+const getResponsivePosition = (desktopX: number, desktopY: number, windowWidth?: number, windowHeight?: number) => {
   if (typeof window !== 'undefined') {
     const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
     
-    // For mobile devices
+    // For mobile devices - center the window
     if (screenWidth <= 480) {
-      return { x: 10, y: 10 };
+      const safeWidth = windowWidth || 300;
+      const safeHeight = windowHeight || 200;
+      return { 
+        x: Math.max(10, (screenWidth - safeWidth) / 2),
+        y: Math.max(10, (screenHeight - safeHeight - 40) / 2) // 40px for taskbar
+      };
     }
     
-    // For tablets and small screens
+    // For tablets and small screens - center but with some offset
     if (screenWidth <= 1024) {
+      const safeWidth = windowWidth || 300;
+      const safeHeight = windowHeight || 200;
+      const centerX = (screenWidth - safeWidth) / 2;
+      const centerY = (screenHeight - safeHeight - 40) / 2;
+      
       return { 
-        x: Math.max(10, Math.min(desktopX, screenWidth * 0.1)), 
-        y: Math.max(10, Math.min(desktopY, 60)) 
+        x: Math.max(10, Math.min(centerX + (desktopX - 100), screenWidth - safeWidth - 10)), 
+        y: Math.max(10, Math.min(centerY + (desktopY - 100), screenHeight - safeHeight - 50))
       };
     }
   }
@@ -64,7 +75,7 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(100, 100),
+    position: getResponsivePosition(100, 100, 600, 500),
     size: getResponsiveSize(600, 500),
     zIndex: 10
   },
@@ -74,7 +85,7 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(150, 150),
+    position: getResponsivePosition(150, 150, 700, 600),
     size: getResponsiveSize(700, 600),
     zIndex: 10
   },
@@ -84,7 +95,7 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(200, 200),
+    position: getResponsivePosition(200, 200, 500, 400),
     size: getResponsiveSize(500, 400),
     zIndex: 10
   },
@@ -94,7 +105,7 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(250, 250),
+    position: getResponsivePosition(250, 250, 450, 350),
     size: getResponsiveSize(450, 350),
     zIndex: 10
   },
@@ -104,7 +115,7 @@ const initialWindows: WindowState[] = [
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(300, 300),
+    position: getResponsivePosition(300, 300, 400, 300),
     size: getResponsiveSize(400, 300),
     zIndex: 10
   }
@@ -141,11 +152,32 @@ export const useWindowManager = () => {
   }, [windows]);
 
   const openWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
-        ? { ...window, isOpen: true, isMinimized: false, zIndex: highestZIndex + 1 }
-        : window
-    ));
+    setWindows(prev => prev.map(window => {
+      if (window.id === windowId) {
+        // Recalculate position for mobile devices to ensure centering
+        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        let newPosition = window.position;
+        
+        if (screenWidth <= 1024) {
+          // Use responsive positioning with current window size
+          newPosition = getResponsivePosition(
+            window.position.x, 
+            window.position.y, 
+            window.size.width, 
+            window.size.height
+          );
+        }
+        
+        return { 
+          ...window, 
+          isOpen: true, 
+          isMinimized: false, 
+          zIndex: highestZIndex + 1,
+          position: newPosition
+        };
+      }
+      return window;
+    }));
     setHighestZIndex(prev => prev + 1);
   }, [highestZIndex]);
 
