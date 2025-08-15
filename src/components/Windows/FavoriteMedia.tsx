@@ -71,14 +71,16 @@ const FavoriteMedia: React.FC = () => {
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'transform 0.1s ease'
+                  transition: 'background-color 0.1s ease',
+                  padding: '4px',
+                  borderRadius: '2px'
                 }}
                 onClick={() => window.open(item.url, '_blank')}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 {/* Image Placeholder */}
