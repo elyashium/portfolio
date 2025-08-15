@@ -58,42 +58,41 @@ const FavoriteMedia: React.FC = () => {
           {/* Media Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-            gap: '12px',
+            gridTemplateColumns: typeof window !== 'undefined' && window.innerWidth <= 768 
+              ? 'repeat(2, 1fr)' 
+              : 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: '16px',
             marginTop: '16px'
           }}>
             {selectedCategory.items.map(item => (
               <div
                 key={item.id}
-                className="sunken-panel"
                 style={{
-                  padding: '12px',
                   cursor: 'pointer',
-                  transition: 'all 0.1s',
-                  minHeight: '160px',
                   display: 'flex',
-                  flexDirection: 'column'
+                  flexDirection: 'column',
+                  transition: 'transform 0.1s ease'
                 }}
                 onClick={() => window.open(item.url, '_blank')}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#e0e0e0';
+                  e.currentTarget.style.transform = 'scale(1.02)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#c0c0c0';
+                  e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
                 {/* Image Placeholder */}
                 <div style={{
                   width: '100%',
-                  height: '120px',
+                  aspectRatio: '3/4',
                   background: '#f0f0f0',
-                  border: '2px inset #c0c0c0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '32px',
                   marginBottom: '8px',
-                  color: '#808080'
+                  color: '#808080',
+                  border: '1px solid #d0d0d0'
                 }}>
                   {selectedCategory.icon}
                 </div>
@@ -103,11 +102,9 @@ const FavoriteMedia: React.FC = () => {
                   fontSize: '11px',
                   fontWeight: 'bold',
                   textAlign: 'center',
-                  lineHeight: '1.2',
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  lineHeight: '1.3',
+                  color: '#000',
+                  padding: '0 4px'
                 }}>
                   {item.title}
                 </div>
