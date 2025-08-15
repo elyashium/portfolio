@@ -1,6 +1,123 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { favoriteMedia, MediaCategory } from '../../data/favoriteMedia';
 
 const FavoriteMedia: React.FC = () => {
+  const [showExplore, setShowExplore] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<MediaCategory>(favoriteMedia[0]);
+
+  if (showExplore) {
+    return (
+      <div style={{ 
+        padding: '8px',
+        height: '100%',
+        overflow: 'auto'
+      }}>
+        {/* Back Button and Category Selector */}
+        <div className="field-row" style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={() => setShowExplore(false)}
+            style={{ 
+              padding: '4px 8px',
+              fontSize: '11px'
+            }}
+          >
+            ← Back
+          </button>
+          
+          <label htmlFor="category-select">Category:</label>
+          <select
+            id="category-select"
+            value={selectedCategory.id}
+            onChange={(e) => {
+              const category = favoriteMedia.find(c => c.id === e.target.value);
+              if (category) setSelectedCategory(category);
+            }}
+            style={{ width: '200px', marginLeft: '8px' }}
+          >
+            {favoriteMedia.map(category => (
+              <option key={category.id} value={category.id}>
+                {category.icon} {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Category Display */}
+        <div className="sunken-panel" style={{ padding: '16px' }}>
+          {/* Category Title */}
+          <h2 style={{ 
+            margin: '0 0 16px 0',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderBottom: '1px solid #808080',
+            paddingBottom: '4px'
+          }}>
+            {selectedCategory.icon} {selectedCategory.name}
+          </h2>
+
+          {/* Media Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+            gap: '12px',
+            marginTop: '16px'
+          }}>
+            {selectedCategory.items.map(item => (
+              <div
+                key={item.id}
+                className="sunken-panel"
+                style={{
+                  padding: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s',
+                  minHeight: '160px',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+                onClick={() => window.open(item.url, '_blank')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#e0e0e0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#c0c0c0';
+                }}
+              >
+                {/* Image Placeholder */}
+                <div style={{
+                  width: '100%',
+                  height: '120px',
+                  background: '#f0f0f0',
+                  border: '2px inset #c0c0c0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '32px',
+                  marginBottom: '8px',
+                  color: '#808080'
+                }}>
+                  {selectedCategory.icon}
+                </div>
+                
+                {/* Title */}
+                <div style={{
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  lineHeight: '1.2',
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {item.title}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div style={{ 
       padding: '16px',
@@ -21,7 +138,7 @@ const FavoriteMedia: React.FC = () => {
           fontSize: '16px',
           color: '#800080'
         }}>
-          🎵 My Favorite Media
+           Ashish's Favorite Media
         </h2>
         
         <div style={{
@@ -43,7 +160,7 @@ const FavoriteMedia: React.FC = () => {
           margin: '16px 0',
           color: '#666'
         }}>
-          A curated collection of my favorite music, movies, books, and games is on its way!
+          A curated collection of my favorite music, movies, anime/manga and video games
         </p>
 
         <div style={{
@@ -54,12 +171,26 @@ const FavoriteMedia: React.FC = () => {
           fontSize: '10px',
           textAlign: 'left'
         }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Coming Soon:</div>
-          <div>🎧 Coding Playlist</div>
-          <div>🎥 Tech Documentaries</div>
-          <div>📖 Programming Books</div>
-          <div>🎮 Indie Games Collection</div>
+          <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Available Categories:</div>
+          <div>🎵 Music Albums ({favoriteMedia.find(c => c.id === 'music')?.items.length || 0})</div>
+          <div>📚 Anime/Manga ({favoriteMedia.find(c => c.id === 'anime-manga')?.items.length || 0})</div>
+          <div>🎬 Cinema ({favoriteMedia.find(c => c.id === 'cinema')?.items.length || 0})</div>
+          <div>🎮 Video Games ({favoriteMedia.find(c => c.id === 'video-games')?.items.length || 0})</div>
         </div>
+
+        <button
+          onClick={() => setShowExplore(true)}
+          style={{
+            marginTop: '20px',
+            padding: '12px 24px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            minWidth: '120px',
+            cursor: 'pointer'
+          }}
+        >
+          🔍 Explore Media
+        </button>
 
         <p style={{ 
           fontSize: '10px',
@@ -67,7 +198,7 @@ const FavoriteMedia: React.FC = () => {
           color: '#999',
           marginTop: '16px'
         }}>
-          "Good code is like good music - it has rhythm, structure, and beauty."
+          "Click on any media item to visit its page"
         </p>
       </div>
     </div>
