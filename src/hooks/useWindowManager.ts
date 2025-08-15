@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { WindowState } from '../types';
 
 const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
@@ -111,8 +111,34 @@ const initialWindows: WindowState[] = [
 ];
 
 export const useWindowManager = () => {
-  const [windows, setWindows] = useState<WindowState[]>(initialWindows);
-  const [highestZIndex, setHighestZIndex] = useState(20);
+  const [windows, setWindows] = useState<WindowState[]>(() => {
+    try {
+      const savedWindows = localStorage.getItem('windowsState');
+      if (savedWindows) {
+        // Here you might want to add more checks to validate the saved data
+        return JSON.parse(savedWindows);
+      }
+    } catch (error) {
+      console.error("Failed to parse windows state from localStorage", error);
+    }
+    return initialWindows;
+  });
+
+  const [highestZIndex, setHighestZIndex] = useState(() => {
+    const savedWindows = windows; // Use the already initialized state
+    if (savedWindows.length > 0) {
+      return Math.max(...savedWindows.map(w => w.zIndex), 20);
+    }
+    return 20;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('windowsState', JSON.stringify(windows));
+    } catch (error) {
+      console.error("Failed to save windows state to localStorage", error);
+    }
+  }, [windows]);
 
   const openWindow = useCallback((windowId: string) => {
     setWindows(prev => prev.map(window => 
