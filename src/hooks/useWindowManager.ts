@@ -5,7 +5,7 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
   if (typeof window !== 'undefined') {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    
+
     // For mobile devices (480px and below) - Force 75% height
     if (screenWidth <= 480) {
       return {
@@ -13,7 +13,7 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
         height: screenHeight * 0.75 - 40 // Subtract taskbar height
       };
     }
-    
+
     // For small tablets/large phones (481px to 768px) - Force 75% height
     if (screenWidth <= 768) {
       return {
@@ -21,7 +21,7 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
         height: screenHeight * 0.75 - 40 // Subtract taskbar height
       };
     }
-    
+
     // For tablets (769px to 1024px) - Force 75% height
     if (screenWidth <= 1024) {
       return {
@@ -30,7 +30,7 @@ const getResponsiveSize = (desktopWidth: number, desktopHeight: number) => {
       };
     }
   }
-  
+
   // Default desktop size
   return { width: desktopWidth, height: desktopHeight };
 };
@@ -39,31 +39,31 @@ const getResponsivePosition = (desktopX: number, desktopY: number, windowWidth?:
   if (typeof window !== 'undefined') {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    
+
     // For mobile devices - center the window
     if (screenWidth <= 480) {
       const safeWidth = windowWidth || 300;
       const safeHeight = windowHeight || 200;
-      return { 
+      return {
         x: Math.max(10, (screenWidth - safeWidth) / 2),
         y: Math.max(10, (screenHeight - safeHeight - 40) / 2) // 40px for taskbar
       };
     }
-    
+
     // For tablets and small screens - center but with some offset
     if (screenWidth <= 1024) {
       const safeWidth = windowWidth || 300;
       const safeHeight = windowHeight || 200;
       const centerX = (screenWidth - safeWidth) / 2;
       const centerY = (screenHeight - safeHeight - 40) / 2;
-      
-      return { 
-        x: Math.max(10, Math.min(centerX + (desktopX - 100), screenWidth - safeWidth - 10)), 
+
+      return {
+        x: Math.max(10, Math.min(centerX + (desktopX - 100), screenWidth - safeWidth - 10)),
         y: Math.max(10, Math.min(centerY + (desktopY - 100), screenHeight - safeHeight - 50))
       };
     }
   }
-  
+
   return { x: desktopX, y: desktopY };
 };
 
@@ -111,12 +111,12 @@ const initialWindows: WindowState[] = [
   },
   {
     id: 'doodle-pad',
-    title: 'Doodle Pad',
+    title: 'Draw',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    position: getResponsivePosition(300, 300, 400, 300),
-    size: getResponsiveSize(400, 300),
+    position: getResponsivePosition(150, 100, 650, 550),
+    size: getResponsiveSize(650, 550),
     zIndex: 10
   }
 ];
@@ -157,21 +157,21 @@ export const useWindowManager = () => {
         // Recalculate position for mobile devices to ensure centering
         const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
         let newPosition = window.position;
-        
+
         if (screenWidth <= 1024) {
           // Use responsive positioning with current window size
           newPosition = getResponsivePosition(
-            window.position.x, 
-            window.position.y, 
-            window.size.width, 
+            window.position.x,
+            window.position.y,
+            window.size.width,
             window.size.height
           );
         }
-        
-        return { 
-          ...window, 
-          isOpen: true, 
-          isMinimized: false, 
+
+        return {
+          ...window,
+          isOpen: true,
+          isMinimized: false,
           zIndex: highestZIndex + 1,
           position: newPosition
         };
@@ -184,24 +184,24 @@ export const useWindowManager = () => {
 
 
   const closeWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, isOpen: false, isMinimized: false }
         : window
     ));
   }, []);
 
   const minimizeWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, isMinimized: true }
         : window
     ));
   }, []);
 
   const maximizeWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, isMaximized: !window.isMaximized, zIndex: highestZIndex + 1 }
         : window
     ));
@@ -209,8 +209,8 @@ export const useWindowManager = () => {
   }, [highestZIndex]);
 
   const restoreWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, isMinimized: false, zIndex: highestZIndex + 1 }
         : window
     ));
@@ -223,22 +223,22 @@ export const useWindowManager = () => {
       if (targetWindow && targetWindow.isMinimized) {
         setHighestZIndex(prevZIndex => prevZIndex + 1);
       }
-      
-      return prev.map(window => 
-        window.id === windowId 
-          ? { 
-              ...window, 
-              isMinimized: !window.isMinimized, 
-              zIndex: window.isMinimized ? highestZIndex + 1 : window.zIndex 
-            }
+
+      return prev.map(window =>
+        window.id === windowId
+          ? {
+            ...window,
+            isMinimized: !window.isMinimized,
+            zIndex: window.isMinimized ? highestZIndex + 1 : window.zIndex
+          }
           : window
       );
     });
   }, [highestZIndex]);
 
   const focusWindow = useCallback((windowId: string) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, zIndex: highestZIndex + 1 }
         : window
     ));
@@ -246,22 +246,22 @@ export const useWindowManager = () => {
   }, [highestZIndex]);
 
   const updateWindowPosition = useCallback((windowId: string, position: { x: number; y: number }) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, position }
         : window
     ));
   }, []);
 
   const updateWindowSize = useCallback((windowId: string, size: { width: number; height: number }) => {
-    setWindows(prev => prev.map(window => 
-      window.id === windowId 
+    setWindows(prev => prev.map(window =>
+      window.id === windowId
         ? { ...window, size }
         : window
     ));
   }, []);
 
-  
+
   return {
     windows,
     openWindow,
