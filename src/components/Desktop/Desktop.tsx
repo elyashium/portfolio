@@ -13,30 +13,17 @@ import Projects from '../Windows/Projects';
 import Blog from '../Windows/Blog';
 import FavoriteMedia from '../Windows/FavoriteMedia';
 import DoodlePad from '../Windows/DoodlePad';
+import ArtGallery from '../Windows/ArtGallery';
+import ImageViewer from '../Windows/ImageViewer';
 
 const Desktop: React.FC = () => {
   const windowManager = useWindowManager();
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-
-  const desktopIcons = [
-    { id: 'ashish-exe', label: 'Ashish.exe', icon: '👨‍💻' },
-    { id: 'projects', label: 'Projects', icon: '📁' },
-    { id: 'blog', label: 'Blog.exe', icon: '📝' },
-    { id: 'favorite-media', label: 'Ashishs fav media', icon: '🎵' },
-    { id: 'doodle-pad', label: 'Draw.exe', icon: '🎨' }
-  ];
-
-  const handleIconClick = (iconId: string) => {
-    windowManager.openWindow(iconId);
-    setSelectedIcon(iconId);
-  };
-
-  const handleDesktopClick = () => {
-    setSelectedIcon(null);
-  };
+  const [viewingImage, setViewingImage] = useState<{ title: string, url: string } | null>(null);
 
   /* Saved Drawings Logic */
+  // We keep this state to update localStorage, but we don't render icons anymore
   const [savedDrawings, setSavedDrawings] = useState<{ id: string, label: string, icon: string, data: string }[]>([]);
 
   React.useEffect(() => {
@@ -59,26 +46,30 @@ const Desktop: React.FC = () => {
     localStorage.setItem('local_drawings', JSON.stringify(updatedDrawings));
   };
 
-  const allIcons = [...desktopIcons, ...savedDrawings];
+  const desktopIcons = [
+    { id: 'ashish-exe', label: 'Ashish.exe', icon: '👨‍💻' },
+    { id: 'projects', label: 'Projects', icon: '📁' },
+    { id: 'blog', label: 'Blog.exe', icon: '📝' },
+    { id: 'favorite-media', label: 'Ashishs fav media', icon: '🎵' },
+    { id: 'art-gallery', label: 'My Drawings', icon: '📂' },
+    { id: 'doodle-pad', label: 'Draw.exe', icon: '🎨' }
+  ];
+
+  const handleIconClick = (iconId: string) => {
+    windowManager.openWindow(iconId);
+    setSelectedIcon(iconId);
+  };
+
+  const handleDesktopClick = () => {
+    setSelectedIcon(null);
+  };
+
+  const handleOpenImage = (image: { title: string, url: string }) => {
+    setViewingImage(image);
+    windowManager.openWindow('image-viewer');
+  };
 
   const renderWindowContent = (windowId: string) => {
-    // Check if it's a saved drawing
-    const drawing = savedDrawings.find(d => d.id === windowId);
-    if (drawing) {
-      return (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100%',
-          background: '#808080',
-          overflow: 'auto'
-        }}>
-          <img src={drawing.data} alt={drawing.label} style={{ maxWidth: '100%', maxHeight: '100%', border: '2px inset white' }} />
-        </div>
-      );
-    }
-
     switch (windowId) {
       case 'ashish-exe':
         return <AshishExe />;
@@ -90,6 +81,10 @@ const Desktop: React.FC = () => {
         return <FavoriteMedia />;
       case 'doodle-pad':
         return <DoodlePad onSave={handleSaveLocal} />;
+      case 'art-gallery':
+        return <ArtGallery onOpenImage={handleOpenImage} />;
+      case 'image-viewer':
+        return <ImageViewer image={viewingImage} />;
       default:
         return <div>Window content not found</div>;
     }
@@ -121,7 +116,7 @@ const Desktop: React.FC = () => {
         flexWrap: 'wrap',
         maxHeight: '90vh'
       }}>
-        {allIcons.map(icon => (
+        {desktopIcons.map(icon => (
           <DesktopIcon
             key={icon.id}
             id={icon.id}

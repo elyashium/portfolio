@@ -118,6 +118,26 @@ const initialWindows: WindowState[] = [
     position: getResponsivePosition(150, 100, 650, 550),
     size: getResponsiveSize(650, 550),
     zIndex: 10
+  },
+  {
+    id: 'art-gallery',
+    title: 'My Drawings',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    position: getResponsivePosition(100, 100, 600, 450),
+    size: getResponsiveSize(600, 450),
+    zIndex: 9
+  },
+  {
+    id: 'image-viewer',
+    title: 'Picture Viewer',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    position: getResponsivePosition(120, 120, 500, 400),
+    size: getResponsiveSize(500, 400),
+    zIndex: 11
   }
 ];
 
