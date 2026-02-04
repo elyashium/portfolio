@@ -287,7 +287,7 @@ const DoodlePad: React.FC<DoodlePadProps> = ({ onSave }) => {
 
   const handleSave = async (toCloud: boolean = false) => {
     const canvas = canvasRef.current;
-    if (!canvas || !onSave) return;
+    if (!canvas) return;
 
     if (toCloud) {
       if (!isSupabaseConfigured()) {
@@ -329,6 +329,7 @@ const DoodlePad: React.FC<DoodlePadProps> = ({ onSave }) => {
 
         setUploadStatus('Saved to Cloud!');
       } catch (error: any) {
+        console.error('Upload error:', error);
         setUploadStatus(`Error: ${error.message}`);
       } finally {
         setIsUploading(false);
@@ -336,7 +337,17 @@ const DoodlePad: React.FC<DoodlePadProps> = ({ onSave }) => {
     } else {
       // Local download/save
       const imageData = canvas.toDataURL('image/png');
-      onSave(imageData, fileName);
+      if (onSave) {
+        onSave(imageData, fileName);
+      } else {
+        // Default download behavior
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = `${fileName}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
       setShowSaveDialog(false);
     }
   };

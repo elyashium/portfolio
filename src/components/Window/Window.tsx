@@ -36,14 +36,16 @@ const Window: React.FC<WindowProps> = ({
   };
 
   const handleResize = (e: React.MouseEvent | TouchEvent, direction: string) => {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     e.stopPropagation();
-    
+
     // Handle both mouse and touch events
     const isTouch = 'touches' in e;
     const clientX = isTouch ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
     const clientY = isTouch ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-    
+
     const startX = clientX;
     const startY = clientY;
     const startWidth = window.size.width;
@@ -55,10 +57,10 @@ const Window: React.FC<WindowProps> = ({
       const isTouchMove = 'touches' in moveEvent;
       const currentX = isTouchMove ? moveEvent.touches[0].clientX : moveEvent.clientX;
       const currentY = isTouchMove ? moveEvent.touches[0].clientY : moveEvent.clientY;
-      
+
       const deltaX = currentX - startX;
       const deltaY = currentY - startY;
-      
+
       let newWidth = startWidth;
       let newHeight = startHeight;
       let newX = startPosX;
@@ -83,11 +85,11 @@ const Window: React.FC<WindowProps> = ({
           newY = startPosY + deltaY;
         }
       }
-      
+
       if (onResize) {
         onResize({ width: newWidth, height: newHeight });
       }
-      
+
       // Update position if resizing from left or top
       if ((direction.includes('left') && newWidth > 300) || (direction.includes('top') && newHeight > 200)) {
         onDrag({ x: newX, y: newY });
@@ -109,7 +111,7 @@ const Window: React.FC<WindowProps> = ({
 
   // Check if we're on a mobile device
   const isMobile = typeof globalThis.window !== 'undefined' && globalThis.window.innerWidth <= 768;
-  
+
   return (
     <Draggable
       handle=".title-bar"
@@ -137,8 +139,8 @@ const Window: React.FC<WindowProps> = ({
         <div className="title-bar">
           <div className="title-bar-text">{window.title}</div>
           <div className="title-bar-controls">
-            <button 
-              className="title-bar-control" 
+            <button
+              className="title-bar-control"
               onClick={onMinimize}
               onTouchEnd={onMinimize}
               aria-label="Minimize"
@@ -159,8 +161,8 @@ const Window: React.FC<WindowProps> = ({
             >
               <span aria-hidden="true" style={{ userSelect: 'none' }}>_</span>
             </button>
-            <button 
-              className="title-bar-control" 
+            <button
+              className="title-bar-control"
               onClick={onMaximize}
               onTouchEnd={onMaximize}
               aria-label={window.isMaximized ? "Restore" : "Maximize"}
@@ -181,8 +183,8 @@ const Window: React.FC<WindowProps> = ({
             >
               <span aria-hidden="true" style={{ userSelect: 'none' }}>□</span>
             </button>
-            <button 
-              className="title-bar-control" 
+            <button
+              className="title-bar-control"
               onClick={onClose}
               onTouchEnd={onClose}
               aria-label="Close"
@@ -208,7 +210,7 @@ const Window: React.FC<WindowProps> = ({
         <div className="window-body window-content">
           {children}
         </div>
-        
+
         {/* Invisible Resize Handles - Functional but hidden */}
         {!window.isMaximized && (
           <>
@@ -228,7 +230,7 @@ const Window: React.FC<WindowProps> = ({
               onMouseDown={(e) => handleResize(e, 'bottom-right')}
               onTouchStart={(e) => handleResize(e as any, 'bottom-right')}
             />
-            
+
             {/* Right edge */}
             <div
               style={{
@@ -245,7 +247,7 @@ const Window: React.FC<WindowProps> = ({
               onMouseDown={(e) => handleResize(e, 'right')}
               onTouchStart={(e) => handleResize(e as any, 'right')}
             />
-            
+
             {/* Bottom edge */}
             <div
               style={{
