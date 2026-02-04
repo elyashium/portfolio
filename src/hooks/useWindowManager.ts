@@ -146,8 +146,18 @@ export const useWindowManager = () => {
     try {
       const savedWindows = localStorage.getItem('windowsState');
       if (savedWindows) {
-        // Here you might want to add more checks to validate the saved data
-        return JSON.parse(savedWindows);
+        const parsed: WindowState[] = JSON.parse(savedWindows);
+        // Merge with initialWindows to ensure new windows are added
+        const initialMap = new Map(initialWindows.map(w => [w.id, w]));
+        const savedMap = new Map(parsed.map(w => [w.id, w]));
+
+        // Update saved windows with new definitions if needed, or add missing ones
+        initialWindows.forEach(initial => {
+          if (!savedMap.has(initial.id)) {
+            parsed.push(initial);
+          }
+        });
+        return parsed;
       }
     } catch (error) {
       console.error("Failed to parse windows state from localStorage", error);
