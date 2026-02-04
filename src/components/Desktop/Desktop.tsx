@@ -36,7 +36,49 @@ const Desktop: React.FC = () => {
     setSelectedIcon(null);
   };
 
+  /* Saved Drawings Logic */
+  const [savedDrawings, setSavedDrawings] = useState<{ id: string, label: string, icon: string, data: string }[]>([]);
+
+  React.useEffect(() => {
+    const loaded = localStorage.getItem('local_drawings');
+    if (loaded) {
+      setSavedDrawings(JSON.parse(loaded));
+    }
+  }, []);
+
+  const handleSaveLocal = (imageData: string, name: string) => {
+    const newDrawing = {
+      id: `drawing-${Date.now()}`,
+      label: `${name}.png`,
+      icon: '🎨',
+      data: imageData
+    };
+
+    const updatedDrawings = [...savedDrawings, newDrawing];
+    setSavedDrawings(updatedDrawings);
+    localStorage.setItem('local_drawings', JSON.stringify(updatedDrawings));
+  };
+
+  const allIcons = [...desktopIcons, ...savedDrawings];
+
   const renderWindowContent = (windowId: string) => {
+    // Check if it's a saved drawing
+    const drawing = savedDrawings.find(d => d.id === windowId);
+    if (drawing) {
+      return (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          background: '#808080',
+          overflow: 'auto'
+        }}>
+          <img src={drawing.data} alt={drawing.label} style={{ maxWidth: '100%', maxHeight: '100%', border: '2px inset white' }} />
+        </div>
+      );
+    }
+
     switch (windowId) {
       case 'ashish-exe':
         return <AshishExe />;
@@ -47,20 +89,19 @@ const Desktop: React.FC = () => {
       case 'favorite-media':
         return <FavoriteMedia />;
       case 'doodle-pad':
-        return <DoodlePad />;
+        return <DoodlePad onSave={handleSaveLocal} />;
       default:
         return <div>Window content not found</div>;
     }
   };
 
   return (
-    <div 
+    <div
       className="desktop"
       onClick={handleDesktopClick}
       style={{
         width: '100vw',
         height: '100vh',
-        // background: 'linear-gradient(45deg, #008080, #20b2aa)',
         backgroundImage: `url(${desktop_bg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -70,15 +111,17 @@ const Desktop: React.FC = () => {
       }}
     >
       {/* Desktop Icons */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '20px', 
+      <div style={{
+        position: 'absolute',
+        top: '20px',
         left: '20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px'
+        gap: '20px',
+        flexWrap: 'wrap',
+        maxHeight: '90vh'
       }}>
-        {desktopIcons.map(icon => (
+        {allIcons.map(icon => (
           <DesktopIcon
             key={icon.id}
             id={icon.id}

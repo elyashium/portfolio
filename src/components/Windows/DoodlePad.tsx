@@ -89,7 +89,7 @@ const DoodlePad: React.FC<DoodlePadProps> = ({ onSave }) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (ctx) {
         // Save existing
         const oldData = ctx.getImageData(0, 0, canvas.width, canvas.height);
