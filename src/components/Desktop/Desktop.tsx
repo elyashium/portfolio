@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import Taskbar from '../Taskbar/Taskbar';
 import Window from '../Window/Window';
 import DesktopIcon from '../DesktopIcon/DesktopIcon';
-import StartMenu from '../StartMenu/StartMenu';
+import { FloatingDock } from '../FloatingDock/FloatingDock';
 
 import desktop_bg from './desktop_bg.png';
 import { useWindowManager } from '../../hooks/useWindowManager';
@@ -16,14 +15,22 @@ import DoodlePad from '../Windows/DoodlePad';
 import ArtGallery from '../Windows/ArtGallery';
 import ImageViewer from '../Windows/ImageViewer';
 
+import {
+  IconUser,
+  IconFolder,
+  IconNotebook,
+  IconMusic,
+  IconBrush,
+  IconPhoto,
+  IconBrandGithub
+} from '@tabler/icons-react';
+
 const Desktop: React.FC = () => {
   const windowManager = useWindowManager();
-  const [showStartMenu, setShowStartMenu] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [viewingImage, setViewingImage] = useState<{ title: string, url: string } | null>(null);
 
   /* Saved Drawings Logic */
-  // We keep this state to update localStorage, but we don't render icons anymore
   const [savedDrawings, setSavedDrawings] = useState<{ id: string, label: string, icon: string, data: string }[]>([]);
 
   React.useEffect(() => {
@@ -90,6 +97,51 @@ const Desktop: React.FC = () => {
     }
   };
 
+  /* Dock Items Configuration */
+  const dockItems = [
+    {
+      title: "Ashish.exe",
+      icon: <IconUser className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('ashish-exe')
+    },
+    {
+      title: "Projects",
+      icon: <IconFolder className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('projects')
+    },
+    {
+      title: "Blog",
+      icon: <IconNotebook className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('blog')
+    },
+    {
+      title: "Media",
+      icon: <IconMusic className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('favorite-media')
+    },
+    {
+      title: "Draw",
+      icon: <IconBrush className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('doodle-pad')
+    },
+    {
+      title: "Gallery",
+      icon: <IconPhoto className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: () => windowManager.openWindow('art-gallery')
+    },
+    {
+      title: "GitHub",
+      icon: <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "https://github.com",
+    },
+  ];
+
   return (
     <div
       className="desktop"
@@ -146,20 +198,9 @@ const Desktop: React.FC = () => {
         )
       ))}
 
-      {/* Start Menu */}
-      {showStartMenu && (
-        <StartMenu
-          onClose={() => setShowStartMenu(false)}
-          onOpenWindow={windowManager.openWindow}
-        />
-      )}
-
-      {/* Taskbar */}
-      <Taskbar
-        windows={windowManager.windows}
-        onStartClick={() => setShowStartMenu(!showStartMenu)}
-        onWindowToggle={windowManager.toggleMinimizeWindow}
-        showStartMenu={showStartMenu}
+      {/* Floating Dock (Replacements for Start Menu and Taskbar) */}
+      <FloatingDock
+        items={dockItems}
       />
     </div>
   );
